@@ -1,0 +1,72 @@
+[18:05:45] Transport mode: termux
+[18:05:48] Using USB device: /dev/bus/usb/002/015
+[18:05:48] >>> If Android shows a USB permission popup, tap OK <<<
+[18:05:48] Backend started (PID 12805)
+[18:05:48] Waiting for the backend to respond...
+don't know how to enumerate ttys on this system.
+! I you know how the serial ports are named send this information to
+! the author of this module:
+
+sys.platform = 'android'
+os.name = 'posix'
+pySerial version = 3.5
+
+also add the naming scheme of the serial ports and with a bit luck you can get
+this module running...
+2026-09-28 18:05:50,162 [INFO] Starting pump backend on http://127.0.0.1:5005  (transport: termux)
+2026-09-28 18:05:50,181 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5005
+2026-09-28 18:05:50,182 [INFO] [33mPress CTRL+C to quit[0m
+2026-09-28 18:05:52,358 [INFO] Arduino link up: CH340 clone 1a86:7523 via Termux USB (ch340)
+2026-09-28 18:05:52,363 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:52] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:05:52,367 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:52] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:05:52,366 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:52] "GET /hardware HTTP/1.1" 200 -
+[18:05:52] Backend is up.
+2026-09-28 18:05:52,458 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:52] "GET /hardware HTTP/1.1" 200 -
+  Arduino: CONNECTED  ->  CH340 clone 1a86:7523 via Termux USB (ch340)
+[18:05:52] Opening controller UI: http://localhost:5005/
+2026-09-28 18:05:53,664 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:53] "[36mGET / HTTP/1.1[0m" 304 -
+2026-09-28 18:05:54,169 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:54] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:05:55,673 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:55] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:05:58,159 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:58] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:05:59,687 [INFO] 127.0.0.1 - - [28/Sep/2026 18:05:59] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:02,155 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:02] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:03,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:03] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:06,157 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:06] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:07,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:07] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:10,155 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:10] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:11,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:11] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:14,155 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:14] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:15,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:15] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:18,156 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:18] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:19,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:19] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:22,155 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:22] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:23,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:23] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:26,154 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:26] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:27,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:27] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:30,155 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:30] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:31,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:31] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:34,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:34] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:35,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:35] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:38,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:38] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:39,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:39] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:42,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:42] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:43,742 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:43] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:46,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:46] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:47,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:47] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:50,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:50] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:51,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:51] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:54,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:54] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:06:58,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:06:58] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:02,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:02] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:06,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:06] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:10,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:10] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:14,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:14] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:18,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:18] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:22,691 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:22] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:26,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:26] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:07:30,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:07:30] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:25:32,450 [INFO] 127.0.0.1 - - [28/Sep/2026 18:25:32] "GET / HTTP/1.1" 200 -
+2026-09-28 18:25:32,506 [INFO] 127.0.0.1 - - [28/Sep/2026 18:25:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-28 18:25:32,584 [INFO] 127.0.0.1 - - [28/Sep/2026 18:25:32] "[36mGET / HTTP/1.1[0m" 304 -
+2026-09-28 18:25:32,820 [INFO] 127.0.0.1 - - [28/Sep/2026 18:25:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

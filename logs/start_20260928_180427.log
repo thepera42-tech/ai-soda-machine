@@ -1,0 +1,33 @@
+[18:04:27] Transport mode: termux
+[18:04:33] Using USB device: /dev/bus/usb/002/014
+[18:04:33] >>> If Android shows a USB permission popup, tap OK <<<
+[18:04:33] Backend started (PID 12424)
+[18:04:33] Waiting for the backend to respond...
+don't know how to enumerate ttys on this system.
+! I you know how the serial ports are named send this information to
+! the author of this module:
+
+sys.platform = 'android'
+os.name = 'posix'
+pySerial version = 3.5
+
+also add the naming scheme of the serial ports and with a bit luck you can get
+this module running...
+2026-09-28 18:04:35,928 [INFO] Starting pump backend on http://127.0.0.1:5005  (transport: termux)
+2026-09-28 18:04:35,961 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5005
+2026-09-28 18:04:35,962 [INFO] [33mPress CTRL+C to quit[0m
+2026-09-28 18:04:38,350 [INFO] Arduino link up: CH340 clone 1a86:7523 via Termux USB (ch340)
+2026-09-28 18:04:38,356 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:38] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:38,359 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:38] "GET /hardware HTTP/1.1" 200 -
+[18:04:38] Backend is up.
+2026-09-28 18:04:38,455 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:38] "GET /hardware HTTP/1.1" 200 -
+  Arduino: CONNECTED  ->  CH340 clone 1a86:7523 via Termux USB (ch340)
+[18:04:38] Opening controller UI: http://localhost:5005/
+2026-09-28 18:04:39,682 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:39] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:39,741 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:39] "[36mGET / HTTP/1.1[0m" 304 -
+2026-09-28 18:04:40,185 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:40] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:43,694 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:43] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:44,192 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:44] "GET /hardware HTTP/1.1" 200 -
+[18:04:47] Stopping backend...
+Terminated                 $TERMUX_CALLBACK "$@"

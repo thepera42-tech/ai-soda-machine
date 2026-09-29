@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pump Test Mode</title>
+<style>
+  :root{
+    --bg:#000; --frame:#39ff6a; --dim:#7fdba0; --text:#eafff0;
+    --card-bg:#0a120c; --card-border:#1f3a26;
+    --active:#39ff6a; --idle:#3a3a3a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);}
+  header{display:flex;justify-content:space-between;align-items:center;
+    padding:20px 32px;border-bottom:2px solid var(--frame);}
+  header h1{font-size:28px;margin:0;letter-spacing:.02em;}
+  header .sub{color:var(--dim);font-size:15px;}
+  #conn{font-size:15px;padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);}
+  #conn.ok{color:var(--active);border-color:var(--active);}
+  #conn.bad{color:#ff5b5b;border-color:#ff5b5b;}
+  #grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:18px;padding:28px 32px;}
+  .card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:14px;
+    padding:20px;transition:border-color .2s ease, box-shadow .2s ease;}
+  .card.active{border-color:var(--active);box-shadow:0 0 24px rgba(57,255,106,.25);}
+  .card .name{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;}
+  .dot{width:14px;height:14px;border-radius:50%;background:var(--idle);flex:none;}
+  .card.active .dot{background:var(--active);box-shadow:0 0 10px var(--active);}
+  .card .status{margin-top:6px;font-size:14px;color:var(--dim);}
+  .metric{margin-top:16px;display:flex;justify-content:space-between;font-size:15px;}
+  .metric .val{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;}
+  .metric .label{color:var(--dim);font-size:12px;letter-spacing:.03em;}
+  .primary{grid-column:1/-1;}
+  .primary .name{font-size:24px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Pump Test Mode</h1>
+    <div class="sub">8 flavor pumps + primary sparkling water pump</div>
+  </div>
+  <div id="conn" class="bad">connecting...</div>
+</header>
+
+<div id="grid"></div>
+
+<script>
+(function(){
+  const BACKEND_URL = ''; // same-origin: this page is served by backend.py
+  const grid = document.getElementById('grid');
+  const connEl = document.getElementById('conn');
+
+  const pumps = [
+    {id:9, name:'Primary — Sparkling Water', primary:true},
+    ...[1,2,3,4,5,6,7,8].map(i=>({id:i, name:'Flavor Pump '+i, primary:false}))
+  ];
+
+  function fmtTime(sec){
+    const m = Math.floor(sec/60), s = (sec%60).toFixed(1);
+    return m>0 ? `${m}m ${s}s` : `${s}s`;
+  }
+
+  function render(statusById){
+    grid.innerHTML = '';
+    pumps.forEach(p=>{
+      const s = statusById[p.id] || {active:false, speed:0, total_seconds:0};
+      const card = document.createElement('div');
+      card.className = 'card' + (s.active?' active':'') + (p.primary?' primary':'');
+      card.innerHTML = `
+        <div class="name"><span class="dot"></span>${p.name}</div>
+        <div class="status">${s.active ? 'RUNNING' : 'idle'}</div>
+        <div class="metric">
+          <div><div class="val">${s.speed}%</div><div class="label">SPEED</div></div>
+          <div><div class="val">${fmtTime(s.total_seconds)}</div><div class="label">TOTAL ACTIVE TIME</div></div>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  async function poll(){
+    try{
+      const res = await fetch(BACKEND_URL + '/status');
+      const data = await res.json();
+      const byId = {};
+      data.forEach(p=>byId[p.pump]=p);
+      render(byId);
+    }catch(err){
+      // hardware/connection state is reported separately by pollHardware()
+    }
+  }
+
+  async function pollHardware(){
+    try{
+      const res = await fetch(BACKEND_URL + '/hardware');
+      const hw = await res.json();
+      connEl.className = 'ok';
+      if(hw.mock){
+        connEl.textContent = 'simulated (no hardware)';
+        connEl.className = 'ok';
+      } else if(hw.connected){
+        connEl.textContent = 'Arduino connected (' + hw.transport + ')';
+        connEl.className = 'ok';
+      } else {
+        connEl.textContent = 'Arduino not found' + (hw.error ? ': ' + hw.error : '');
+        connEl.className = 'bad';
+      }
+    }catch(err){
+      connEl.textContent = 'backend.py not reachable';
+      connEl.className = 'bad';
+    }
+  }
+
+  render({}); // initial idle render before first poll resolves
+  poll();
+  pollHardware();
+  setInterval(poll, 500);
+  setInterval(pollHardware, 2000);
+})();
+</script>
+</body>
+</html>

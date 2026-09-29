@@ -1,0 +1,122 @@
+// Pump controller — Arduino Uno (pins adapted from the Mega version)
+// Listens on USB Serial (9600 baud) for text commands and drives up to 9
+// pumps concurrently via PWM, through MOSFET driver modules.
+// Pumps 1-8 = flavor pumps. Pump 9 = primary sparkling water pump.
+//
+// Commands (newline-terminated):
+//   FIRE  <pumpId 1-9> <durationMs> <speedPct 0-100>   (timed pulse)
+//   START <pumpId 1-9> <speedPct 0-100>                (run until STOP)
+//   STOP  <pumpId 1-9>
+//   STOPALL
+//
+// Replies "OK\n" once a command is accepted, and "DONE <pumpId>\n" when a
+// timed (FIRE) pump finishes, so the backend can log real completion times.
+
+const int PUMP_COUNT = 9;
+// Uno pin map. Only pins 3,5,6,9,10,11 are PWM (speed control works there).
+// Pumps 7-9 use pins 2,4,7, which are plain on/off (full speed only).
+// Never use pins 0 and 1 — they carry the USB serial connection.
+// Index 8 (the 9th entry) drives the primary sparkling water pump.
+const int pumpPins[PUMP_COUNT] = {3, 5, 6, 9, 10, 11, 2, 4, 7};
+
+unsigned long endTime[PUMP_COUNT] = {0};
+bool running[PUMP_COUNT] = {false};
+bool manualHold[PUMP_COUNT] = {false}; // true = started via START, ignore endTime
+String buf = "";  // serial line buffer (global: a function-local static String breaks linking on ArduinoDroid)
+
+void setup() {
+  Serial.begin(9600);
+  for (int i = 0; i < PUMP_COUNT; i++) {
+    pinMode(pumpPins[i], OUTPUT);
+    analogWrite(pumpPins[i], 0);
+  }
+}
+
+void startPump(int idx, int speedPct, unsigned long durationMs, bool hold) {
+  int pwmVal = map(constrain(speedPct, 0, 100), 0, 100, 0, 255);
+  analogWrite(pumpPins[idx], pwmVal);
+  running[idx] = true;
+  manualHold[idx] = hold;
+  endTime[idx] = hold ? 0 : millis() + durationMs;
+}
+
+void stopPump(int idx) {
+  analogWrite(pumpPins[idx], 0);
+  running[idx] = false;
+  manualHold[idx] = false;
+}
+
+void handleLine(String line) {
+  line.trim();
+  if (line.length() == 0) return;
+
+  if (line == "STOPALL") {
+    for (int i = 0; i < PUMP_COUNT; i++) stopPump(i);
+    Serial.println("OK");
+    return;
+  }
+
+  if (line.startsWith("STOP ")) {
+    int pumpId = line.substring(5).toInt();
+    if (pumpId < 1 || pumpId > PUMP_COUNT) { Serial.println("ERR bad_pump"); return; }
+    stopPump(pumpId - 1);
+    Serial.println("OK");
+    return;
+  }
+
+  if (line.startsWith("START ")) {
+    int p1 = line.indexOf(' ');
+    int p2 = line.indexOf(' ', p1 + 1);
+    if (p2 < 0) { Serial.println("ERR bad_format"); return; }
+    int pumpId = line.substring(p1 + 1, p2).toInt();
+    int speed = line.substring(p2 + 1).toInt();
+    if (pumpId < 1 || pumpId > PUMP_COUNT) { Serial.println("ERR bad_pump"); return; }
+    startPump(pumpId - 1, speed, 0, true);
+    Serial.println("OK");
+    return;
+  }
+
+  // Expected: FIRE <id> <ms> <speed>
+  if (line.startsWith("FIRE")) {
+    int p1 = line.indexOf(' ');
+    int p2 = line.indexOf(' ', p1 + 1);
+    int p3 = line.indexOf(' ', p2 + 1);
+    if (p1 < 0 || p2 < 0 || p3 < 0) { Serial.println("ERR bad_format"); return; }
+
+    int pumpId = line.substring(p1 + 1, p2).toInt();
+    unsigned long ms = line.substring(p2 + 1, p3).toInt();
+    int speed = line.substring(p3 + 1).toInt();
+
+    if (pumpId < 1 || pumpId > PUMP_COUNT) { Serial.println("ERR bad_pump"); return; }
+
+    startPump(pumpId - 1, speed, ms, false);
+    Serial.println("OK");
+    return;
+  }
+
+  Serial.println("ERR unknown_command");
+}
+
+void loop() {
+  // Read one line at a time from serial
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n') {
+      handleLine(buf);
+      buf = "";
+    } else if (c != '\r') {
+      buf += c;
+    }
+  }
+
+  // Check for timed (non-manual) pumps that need to switch off
+  unsigned long now = millis();
+  for (int i = 0; i < PUMP_COUNT; i++) {
+    if (running[i] && !manualHold[i] && now >= endTime[i]) {
+      stopPump(i);
+      Serial.print("DONE ");
+      Serial.println(i + 1);
+    }
+  }
+}
+

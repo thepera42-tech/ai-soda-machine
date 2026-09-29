@@ -1,0 +1,238 @@
+[17:59:29] Transport mode: termux
+[17:59:34] Using USB device: /dev/bus/usb/002/013
+[17:59:34] >>> If Android shows a USB permission popup, tap OK <<<
+[17:59:34] Backend started (PID 11042)
+[17:59:34] Waiting for the backend to respond...
+don't know how to enumerate ttys on this system.
+! I you know how the serial ports are named send this information to
+! the author of this module:
+
+sys.platform = 'android'
+os.name = 'posix'
+pySerial version = 3.5
+
+also add the naming scheme of the serial ports and with a bit luck you can get
+this module running...
+2026-09-28 17:59:36,214 [INFO] Starting pump backend on http://127.0.0.1:5005  (transport: termux)
+2026-09-28 17:59:36,238 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5005
+2026-09-28 17:59:36,239 [INFO] [33mPress CTRL+C to quit[0m
+2026-09-28 17:59:38,791 [INFO] Arduino link up: CH340 clone 1a86:7523 via Termux USB (ch340)
+2026-09-28 17:59:38,796 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:38] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:38,800 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:38] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:38,799 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:38] "GET /hardware HTTP/1.1" 200 -
+[17:59:38] Backend is up.
+2026-09-28 17:59:38,887 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:38] "GET /hardware HTTP/1.1" 200 -
+  Arduino: CONNECTED  ->  CH340 clone 1a86:7523 via Termux USB (ch340)
+[17:59:39] Opening controller UI: http://localhost:5005/
+2026-09-28 17:59:40,182 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:40] "[36mGET / HTTP/1.1[0m" 304 -
+2026-09-28 17:59:40,845 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:40] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:41,693 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:41] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:44,838 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:44] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:45,696 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:45] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:48,843 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:48] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:49,698 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:49] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:52,875 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:52] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:53,692 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:53] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:57,704 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:57] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 17:59:57,718 [INFO] 127.0.0.1 - - [28/Sep/2026 17:59:57] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:01,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:01] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:01,709 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:01] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:05,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:05] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:05,713 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:05] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:09,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:09] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:09,712 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:09] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:13,707 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:13] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:13,738 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:13] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:17,720 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:17] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:17,747 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:17] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:21,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:21] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:21,713 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:21] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:25,716 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:25] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:25,760 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:25] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:29,709 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:29] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:33,705 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:33] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:00:37,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:00:37] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:02:58,969 [INFO] 127.0.0.1 - - [28/Sep/2026 18:02:58] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-09-28 18:03:02,737 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:02] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:06,750 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:06] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:07,553 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:07] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:08,034 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:08] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:08,541 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:08] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:09,038 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:09] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:09,549 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:09] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:09,556 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:09] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:10,049 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:10] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:10,538 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:10] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:11,040 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:11] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:11,563 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:11] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:11,566 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:11] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:11,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:11] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:12,037 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:12] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:12,537 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:12] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:13,042 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:13] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:13,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:13] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:13,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:13] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:14,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:14] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:15,707 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:15] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:15,710 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:15] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:15,729 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:15] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:16,708 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:16] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:17,194 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:17] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:17,607 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:17] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:17,615 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:17] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:18,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:18] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:18,730 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:18] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:19,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:19] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:19,707 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:19] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:20,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:20] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:21,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:21] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:21,708 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:21] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:22,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:22] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:22,729 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:22] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:23,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:23] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:23,704 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:23] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:24,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:24] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:25,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:25] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:25,704 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:25] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:26,690 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:26] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:26,727 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:26] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:27,688 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:27] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:27,693 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:27] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:28,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:28] "GET /status HTTP/1.1" 200 -
+2026-09-28 18:03:29,365 [ERROR] Arduino link lost: USB connection lost: USB read failed: device disconnected (-4)
+2026-09-28 18:03:29,706 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:29,707 [WARNING] Arduino not available (termux): could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:29,709 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:29] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:29,710 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:29] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:30,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:30,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:30] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:30,727 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:30] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:31,700 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:31,711 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:31] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:31,712 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:31] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:32,693 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:32,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:32] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:33,693 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:33,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:33] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:33,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:33] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:34,693 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:34,695 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:34] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:34,728 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:34] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:35,706 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:35,710 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:35] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:35,712 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:35] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:36,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:36,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:36] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:37,699 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:37,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:37] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:37,707 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:37] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:38,697 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:38,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:38] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:38,729 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:38] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:39,698 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:39,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:39] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:39,704 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:39] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:40,698 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:40,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:40] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:41,698 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:41,704 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:41] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:41,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:41] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:42,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:42,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:42] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:42,727 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:42] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:43,667 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:43,676 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:43] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:43,672 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:43] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:44,696 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:44,698 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:44] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:45,710 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:45,712 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:45] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:45,715 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:45] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:46,689 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:46,691 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:46] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:46,727 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:46] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:47,698 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:47,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:47] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:47,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:47] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:48,691 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:48,693 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:48] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:49,699 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:49,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:49] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:49,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:49] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:50,678 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:50,680 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:50] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:50,729 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:50] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:51,696 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:51,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:51] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:51,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:51] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:52,696 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:52,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:52] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:53,702 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:53,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:53] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:53,708 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:53] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:54,695 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:54,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:54] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:54,728 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:54] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:55,700 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:55,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:55] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:55,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:55] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:56,697 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:56,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:56] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:57,696 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:57,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:57] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:57,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:57] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:58,699 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:58,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:58] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:03:58,728 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:58] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:59,703 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:03:59,708 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:59] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:03:59,711 [INFO] 127.0.0.1 - - [28/Sep/2026 18:03:59] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:00,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:00,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:00] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:01,711 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:01,712 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:01] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:01,714 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:01] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:02,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:02,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:02] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:02,726 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:02] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:03,697 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:03,701 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:03] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:03,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:03] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:04,695 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:04,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:04] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:05,752 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:05,762 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:05] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:05,764 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:05] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:06,694 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:06,697 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:06] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:07,699 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:07,702 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:07] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:07,704 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:07] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:07,721 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:07] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:08,696 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:08,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:08] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:09,702 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:09,709 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:09] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:09,711 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:09] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:10,701 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:10,703 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:10] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:11,713 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:11] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:11,716 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:11,721 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:11] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:11,746 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:11] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:12,695 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:12,696 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:12] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:13,702 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:13,706 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:13] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:13,708 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:13] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:14,698 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:14,700 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:14] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:15,701 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:15,705 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:15] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:15,707 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:15] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+2026-09-28 18:04:15,724 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:15] "GET /hardware HTTP/1.1" 200 -
+2026-09-28 18:04:16,697 [ERROR] Status check: serial unavailable: could not open the USB device from Android's descriptor: I/O error (-1)
+2026-09-28 18:04:16,699 [INFO] 127.0.0.1 - - [28/Sep/2026 18:04:16] "[35m[1mGET /status HTTP/1.1[0m" 503 -
+[18:04:19] Stopping backend...
+Terminated                 $TERMUX_CALLBACK "$@"

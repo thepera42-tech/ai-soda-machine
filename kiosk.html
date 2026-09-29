@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soda AI Kiosk</title>
+<style>
+  :root{
+    --bg:#000;
+    --frame:#aab4ae;
+    --eye:#f4f4f4;
+    --eye-glow:#ffffff;
+    --pink:#c4c8c5;
+    --blue:#aab4ae;
+    --text:#e6e9e7;
+    --dim:#a2aaa5;
+    --panel-bg:#101211;
+    --panel-border:#353a37;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;height:100%;background:var(--bg);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;color:var(--text);
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  #stage{
+    position:relative;width:100%;height:100%;min-height:100dvh;
+    display:flex;align-items:center;justify-content:center;
+  }
+  #frame{
+    position:relative;
+    width:100%;height:100dvh;min-height:100%;
+    border:0;border-radius:0;box-shadow:none;
+    background:#050606;
+    overflow:hidden;
+  }
+  .hud{
+    position:absolute;top:10px;display:flex;align-items:center;
+    font-size:13px;letter-spacing:.02em;color:var(--dim);
+    z-index:5;
+  }
+  #fps{display:none;left:12px;font-variant-numeric:tabular-nums;}
+  #hwBadge{
+    max-width:60%;white-space:normal;left:12px;top:12px;font-size:10px;letter-spacing:.03em;
+  }
+  #hwBadge.hw-mock{color:#aab4ae;}
+  #hwBadge.hw-connected{color:#c5d1c9;}
+  #hwBadge.hw-missing{color:#dd8b83;}
+  #hwBadge.hw-offline{color:#dd8b83;}
+  #statePill{
+    left:50%;transform:translateX(-50%);color:var(--dim);
+    font-weight:500;font-size:11px;
+    letter-spacing:.04em;
+  }
+  #settingsBtn{
+    right:14px;top:12px;background:transparent;
+    border:1px solid #414744;color:var(--dim);
+    padding:6px 10px;border-radius:4px;font-size:11px;cursor:pointer;
+    letter-spacing:.02em;
+  }
+  #settingsBtn:hover{background:#171a18;color:var(--text);}
+  #faceCanvas{position:absolute;inset:0;width:100%;height:100%;}
+  #subtitle{
+    position:absolute;left:12px;right:12px;bottom:56px;
+    padding:3px 8px;text-align:center;font-size:14px;
+    line-height:1.3;color:#f1f3f1;background:rgba(5,6,6,.86);
+    min-height:1.3em;max-height:2.6em;overflow:hidden;z-index:8;
+    pointer-events:none;
+  }
+  #talkBtn{
+    position:absolute;left:12px;bottom:12px;z-index:5;
+    background:#101211;border:1px solid #414744;
+    color:var(--dim);padding:6px 16px;border-radius:6px;
+    font-size:12px;letter-spacing:.02em;cursor:pointer;
+  }
+  #talkBtn.active{background:#dce1dd;color:#101211;border-color:#dce1dd;}
+  #drinkForm{position:absolute;left:76px;right:12px;bottom:12px;z-index:5;display:flex;gap:7px;height:34px;}
+  #drinkInput{flex:1;min-width:0;background:#101211;border:1px solid #414744;border-radius:4px;
+    color:var(--text);padding:0 10px;font:inherit;font-size:12px;}
+  #drinkInput::placeholder{color:#818a84;opacity:1;}
+  #generateBtn{background:#c5cec8;border:1px solid #c5cec8;border-radius:4px;color:#111512;
+    padding:0 12px;font-size:12px;font-weight:600;cursor:pointer;}
+  #generateBtn:disabled,#confirmPour:disabled{opacity:.5;cursor:wait;}
+  #recipeOverlay{position:fixed;left:12px;right:12px;bottom:102px;z-index:6;display:none;justify-content:center;
+    pointer-events:none;}
+  #recipeOverlay.open{display:flex;}
+  .recipeCard{pointer-events:auto;width:min(100%,520px);max-height:min(46dvh,380px);overflow-y:auto;
+    background:#101513;border:1px solid #45534a;border-left:3px solid #8da995;border-radius:4px;padding:14px 16px;}
+  .recipeEyebrow{margin:0 0 5px;color:#91a99a;font-size:10px;font-weight:650;letter-spacing:.08em;}
+  .recipeCard h2{margin:0;color:var(--text);font-size:19px;}
+  #recipeReply{margin:8px 0 14px;color:var(--text);font-size:14px;line-height:1.45;}
+  #recipeIngredients{margin:0;padding:0;list-style:none;border-top:1px solid var(--panel-border);}
+  #recipeIngredients li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--panel-border);
+    color:var(--dim);font-size:13px;}
+  .recipeActions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+  .recipeActions button{margin:0;}
+
+  /* ---- Settings panel ---- */
+  #testPanel{
+    position:fixed;inset:0;background:rgba(0,0,0,.94);
+    display:none;z-index:20;padding:16px;
+    overflow:auto;
+  }
+  #testPanel.open{display:block;}
+  .panelWrap{max-width:960px;margin:0 auto;}
+  .panelHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .panelHead h2{font-size:16px;margin:0;color:var(--text);font-weight:550;}
+  .closeBtn{background:none;border:1px solid var(--panel-border);color:var(--text);
+    padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+  .tab{background:var(--panel-bg);border:1px solid var(--panel-border);color:var(--dim);
+    padding:7px 13px;border-radius:6px;font-size:12px;cursor:pointer;}
+  .tab.active{background:#d6dcd8;color:#101211;border-color:#d6dcd8;font-weight:600;}
+  .panelSection{display:none;background:var(--panel-bg);border:1px solid var(--panel-border);
+    border-radius:6px;padding:16px;}
+  .panelSection.active{display:block;}
+  .pumpRow{display:grid;grid-template-columns:28px 1fr 90px 76px 140px 34px;gap:10px;align-items:center;
+    padding:8px 0;border-bottom:1px solid var(--panel-border);font-size:13px;}
+  .pumpRow input[type=text]{background:#0f1c13;border:1px solid var(--panel-border);color:var(--text);
+    padding:5px 7px;border-radius:5px;width:100%;font-size:12px;}
+  .pumpRow input[type=range]{width:100%;}
+  .pumpRow input[type=number],.stInput{background:#0f1c13;border:1px solid var(--panel-border);color:var(--text);
+    padding:5px 7px;border-radius:5px;width:100%;font-size:12px;font-variant-numeric:tabular-nums;}
+  .stInput{width:80px;font-size:13px;}
+  .pumpRow .runBtn.running{background:#c5cec8;color:#101211;border-color:#c5cec8;font-weight:600;}
+  .stopAllBtn{background:#3a1216;border:1px solid #ff5c5c;color:#ff8a8a;padding:6px 14px;
+    border-radius:6px;font-size:12px;cursor:pointer;flex:none;}
+  .stopAllBtn:hover{background:#4d171c;}
+  .selfTestBtn:disabled{opacity:.45;cursor:default;}
+  .stRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;font-size:13px;color:var(--dim);}
+  .pumpRow button{background:#171a18;border:1px solid var(--panel-border);color:var(--dim);
+    padding:5px 8px;border-radius:5px;font-size:11px;cursor:pointer;}
+  .pumpRow button:hover{background:#222724;}
+  textarea{width:100%;min-height:120px;background:#0c0e0d;border:1px solid var(--panel-border);
+    color:var(--text);padding:10px;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;}
+  .saveBtn{background:#c5cec8;color:#101211;border:none;padding:8px 16px;border-radius:4px;
+    font-weight:600;font-size:13px;cursor:pointer;margin-top:10px;}
+  .histRow{border-bottom:1px solid var(--panel-border);padding:9px 0;font-size:12px;}
+  .histRow .who{color:var(--dim);}
+  .histRow pre{margin:4px 0 0;font-size:11px;color:#9fd;white-space:pre-wrap;}
+  .selfTestBtn{background:#c5cec8;color:#101211;border:none;padding:8px 16px;
+    border-radius:4px;font-weight:600;font-size:13px;cursor:pointer;}
+  .empty{color:var(--dim);font-size:13px;padding:8px 0;}
+  .systemGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:12px 0 18px;}
+  .diagItem{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--panel-border);padding:8px 0;font-size:12px;}
+  .diagItem span:first-child{color:var(--dim);}
+  .diagItem span:last-child{color:var(--text);text-align:right;overflow-wrap:anywhere;}
+  .systemIssues{display:grid;gap:6px;margin:0 0 14px;}
+  .issueItem{border-left:2px solid #d99b44;background:#171512;padding:8px 10px;font-size:12px;}
+  .issueItem strong{display:block;color:#f0bd70;margin-bottom:3px;}
+  .issueItem span{color:var(--text);overflow-wrap:anywhere;}
+  .keyRow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:end;margin:12px 0;}
+  .providerKeyRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(150px,.8fr) auto auto;gap:8px;align-items:end;margin:12px 0;}
+  .keyField{display:grid;gap:6px;color:var(--dim);font-size:12px;}
+  .keyField input{width:100%;height:36px;background:#090a0a;border:1px solid var(--panel-border);border-radius:4px;
+    color:var(--text);padding:0 10px;font:inherit;font-size:13px;}
+  .keyField .secretKeyInput{-webkit-text-security:disc;}
+  .systemActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .settingRow{display:flex;align-items:center;gap:9px;padding:8px 0;color:var(--text);font-size:13px;}
+  .settingRow input{width:16px;height:16px;accent-color:#c5cec8;}
+  .modelPicker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end;margin:12px 0;}
+  .modelField{display:grid;gap:6px;color:var(--dim);font-size:12px;}
+  .modelField select{width:100%;height:36px;background:#090a0a;border:1px solid var(--panel-border);border-radius:4px;color:var(--text);padding:0 8px;font:inherit;font-size:12px;}
+  @media(max-width:600px){.modelPicker{grid-template-columns:1fr;}}
+  .quietBtn{background:transparent;border:1px solid var(--panel-border);color:var(--dim);padding:7px 10px;border-radius:4px;font-size:12px;cursor:pointer;}
+  .quietBtn:hover,.closeBtn:hover{background:#1a1d1b;color:var(--text);}
+  @media(max-width:600px){
+    .keyRow{grid-template-columns:1fr 1fr;}
+    .keyField{grid-column:1/-1;}
+    .providerKeyRow{grid-template-columns:1fr 1fr;}
+    .providerKeyRow .keyField{grid-column:1/-1;}
+    .pumpRow{grid-template-columns:24px minmax(90px,1fr) 58px 58px 68px 20px;gap:4px;font-size:11px;}
+    .pumpRow button{padding:5px 3px;font-size:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="frame">
+    <div class="hud" id="fps">-- fps</div>
+    <div class="hud" id="hwBadge">checking hardware…</div>
+    <div class="hud" id="statePill">IDLE</div>
+    <button class="hud" id="settingsBtn">SETTINGS</button>
+    <canvas id="faceCanvas" aria-label="Animated Cozmo-style robot face"></canvas>
+    <div id="subtitle" aria-live="polite" aria-atomic="true"></div>
+    <button id="talkBtn">TALK</button>
+    <form id="drinkForm">
+      <input id="drinkInput" type="text" maxlength="500" placeholder="Describe your drink..." autocomplete="off" aria-label="Drink idea">
+      <button id="generateBtn" type="submit">MAKE</button>
+    </form>
+  </div>
+</div>
+
+<div id="recipeOverlay" aria-hidden="true">
+  <section class="recipeCard" role="dialog" aria-modal="false" aria-labelledby="recipeName">
+    <p class="recipeEyebrow">PROPOSED DRINK</p>
+    <h2 id="recipeName"></h2>
+    <p id="recipeReply"></p>
+    <ul id="recipeIngredients"></ul>
+    <div class="recipeActions">
+      <button class="closeBtn" id="cancelRecipe" type="button">Edit idea</button>
+      <button class="saveBtn" id="confirmPour" type="button">Pour drink</button>
+    </div>
+  </section>
+</div>
+
+<div id="testPanel">
+  <div class="panelWrap">
+    <div class="panelHead">
+      <h2>Settings</h2>
+      <button class="closeBtn" id="closePanel">Close</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="system">System</button>
+      <button class="tab" data-tab="pumps">Pumps &amp; flavors</button>
+      <button class="tab" data-tab="personality">Personality</button>
+      <button class="tab" data-tab="history">Command history</button>
+      <button class="tab" data-tab="selftest">Self-test</button>
+    </div>
+
+    <div class="panelSection active" id="tab-system">
+      <p class="empty">Groq handles chat and drink calculations. ElevenLabs generates the spoken voice.</p>
+      <div class="systemGrid" id="diagnosticsList"><div class="empty">Checking system...</div></div>
+      <h3>Current issues</h3>
+      <div class="systemIssues" id="systemIssues" role="status" aria-live="polite"><div class="empty">Checking services...</div></div>
+      <div class="modelPicker">
+        <label class="modelField" for="chatModelSelect">Chat model
+          <select id="chatModelSelect" aria-label="Chat model"><option>Loading models...</option></select>
+        </label>
+        <label class="modelField" for="recipeModelSelect">Drink recipe model
+          <select id="recipeModelSelect" aria-label="Drink recipe model"><option>Loading models...</option></select>
+        </label>
+        <button class="quietBtn" id="refreshModels" type="button">Pull available models</button>
+      </div>
+      <div class="empty" id="modelsMsg" role="status" aria-live="polite"></div>
+      <label class="settingRow" for="autoPourToggle">
+        <input id="autoPourToggle" type="checkbox">
+        <span>Automatically pour validated drink recipes without confirmation</span>
+      </label>
+      <div class="providerKeyRow">
+        <label class="keyField" for="groqKeyInput">Groq API key
+          <input id="groqKeyInput" class="secretKeyInput" name="provider-token-entry" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" aria-label="Groq API key">
+        </label>
+        <label class="keyField" for="elevenKeyInput">ElevenLabs API key
+          <input id="elevenKeyInput" class="secretKeyInput" name="provider-token-entry" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" aria-label="ElevenLabs API key">
+        </label>
+        <label class="keyField" for="elevenVoiceId">ElevenLabs voice ID
+          <input id="elevenVoiceId" type="text" spellcheck="false" placeholder="JBFqnCBsd6RMkjVDRZzb">
+        </label>
+        <button class="saveBtn" id="saveProviderKeys" type="button">Save providers</button>
+        <button class="quietBtn" id="clearProviderKeys" type="button">Clear keys</button>
+      </div>
+      <div class="systemActions">
+        <button class="quietBtn" id="testVoiceBtn" type="button">Test voice</button>
+        <button class="quietBtn" id="fullscreenBtn" type="button">Enter full screen</button>
+        <button class="quietBtn" id="refreshDiagnostics" type="button">Refresh diagnostics</button>
+      </div>
+      <div class="empty" id="systemMsg" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="panelSection" id="tab-pumps">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;">
+        <span class="empty" style="padding:0;">Set the seconds, then press Run. Pumps 7–9 are on/off only on the Uno (no speed control).</span>
+        <button class="stopAllBtn" id="stopAll">Stop all</button>
+      </div>
+      <div class="empty" id="pumpMsg" style="min-height:1.3em;padding:0 0 6px;"></div>
+      <div class="pumpRow" style="font-weight:600;color:var(--dim);border-bottom:1px solid var(--panel-border);">
+        <div>On</div><div>Flavor name</div><div>Speed</div><div>Seconds</div><div>Run</div><div></div>
+      </div>
+      <div id="pumpList"></div>
+    </div>
+
+    <div class="panelSection" id="tab-personality">
+      <p class="empty">System prompt for Coda — defines the machine's personality and speaking style.</p>
+      <textarea id="personalityText"></textarea>
+      <br><button class="saveBtn" id="savePersonality">Save</button>
+      <h3>AI memory</h3>
+      <p class="empty">Saved notes are kept in this browser and used as personal preferences. Do not store secrets here.</p>
+      <textarea id="memoryText" maxlength="2000" placeholder="Preferences, favorite flavors, or useful context"></textarea>
+      <div class="systemActions">
+        <button class="saveBtn" id="saveMemory" type="button">Save memory</button>
+        <button class="quietBtn" id="clearMemory" type="button">Clear memory bank</button>
+      </div>
+      <div class="empty" id="memoryMsg" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="panelSection" id="tab-history">
+      <div id="historyList"><div class="empty">No commands yet.</div></div>
+    </div>
+
+    <div class="panelSection" id="tab-selftest">
+      <p class="empty">Runs every pump that is ticked "On" in the Pumps tab, one after another, at its saved speed. Use it to confirm wiring and flow before a real pour.</p>
+      <div class="stRow">
+        <label for="stSecs">Seconds per pump</label>
+        <input class="stInput" id="stSecs" type="number" min="1" max="120" step="1" value="3" inputmode="numeric">
+        <button class="selfTestBtn" id="runSelfTest">Run self-test</button>
+        <button class="stopAllBtn" id="stopSelfTest">Stop</button>
+      </div>
+      <div id="selfTestLog" style="margin-top:12px;font-size:12px;color:var(--dim);"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const PUMP_COUNT = 9;      // 1-8 flavors, 9 = sparkling water
+  const MAX_SECS = 120;      // longest single run allowed from this panel
+  const DEFAULT_PERSONALITY = "You are Coda, a playful, upbeat soda-machine host with a warm, clever, slightly mischievous personality. Match the user's intent and energy. If they just say hi or make small talk, greet them naturally and chat; do not pitch drink options, list flavors, or steer them toward ordering. Only help invent a drink when they ask. Keep replies charming, specific, and concise.";
+  const DRINK_FOCUSED_PERSONALITY = "You're a bright, imaginative soda-shop host. Make distinctly flavored non-alcoholic sodas using the enabled flavor pumps. Pump 9 is optional sparkling water, never the whole drink. Be specific, playful, and concise.";
+  const LEGACY_PERSONALITY = "You are a playful, upbeat soda machine AI. When someone asks for a drink or describes a feeling/concept, translate it into a flavor recipe using the available pumps and call the dispense_drink tool. Keep spoken replies short and fun.";
+  const BACKEND_URL = ''; // same-origin: this page is served by backend.py
+  const frame = document.getElementById('frame');
+  const statePill = document.getElementById('statePill');
+  const subtitle = document.getElementById('subtitle');
+  const faceCanvas = document.getElementById('faceCanvas');
+  const faceCtx = faceCanvas.getContext('2d');
+  const talkBtn = document.getElementById('talkBtn');
+  const drinkForm = document.getElementById('drinkForm');
+  const drinkInput = document.getElementById('drinkInput');
+  const generateBtn = document.getElementById('generateBtn');
+  const recipeOverlay = document.getElementById('recipeOverlay');
+  const confirmPourBtn = document.getElementById('confirmPour');
+
+  // ---- persisted config (per-device, local only) ----
+  function loadConfig(){
+    try{
+      const raw = localStorage.getItem('soda_kiosk_config');
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    const pumps = [];
+    for(let i=1;i<=PUMP_COUNT;i++){
+      pumps.push({id:i, flavor:i===9?'Sparkling water':'', enabled:true, speed:i===9?100:80, secs:5});
+    }
+    return {
+      pumps,
+      personality:DEFAULT_PERSONALITY,
+      autoPour:false,
+      memory:'',
+      chatModel:'',
+      recipeModel:'',
+      history:[]
+    };
+  }
+  function saveConfig(cfg){
+    try{ localStorage.setItem('soda_kiosk_config', JSON.stringify(cfg)); }catch(e){}
+  }
+  let config = loadConfig();
+  if(typeof config.autoPour !== 'boolean') config.autoPour = false;
+  if(typeof config.memory !== 'string') config.memory = '';
+  if(typeof config.chatModel !== 'string') config.chatModel = '';
+  if(typeof config.recipeModel !== 'string') config.recipeModel = '';
+  const providerIssues = Object.create(null);
+  // Upgrade older saved configs: make sure all 9 pumps exist and each has a run time.
+  (function normalize(){
+    const byId = {};
+    (config.pumps||[]).forEach(p=>{ byId[p.id] = p; });
+    config.pumps = [];
+    for(let i=1;i<=PUMP_COUNT;i++){
+      const p = byId[i] || {id:i, flavor:i===9?'Sparkling water':'', enabled:true, speed:i===9?100:80};
+      if(typeof p.secs !== 'number') p.secs = 5;
+      config.pumps.push(p);
+    }
+    if(config.personality === LEGACY_PERSONALITY || config.personality === DRINK_FOCUSED_PERSONALITY){
+      config.personality = DEFAULT_PERSONALITY;
+    }
+    saveConfig(config);
+  })();
+  const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // ---- state machine: idle / listening / thinking / speaking ----
+  let faceMode = 'idle';
+  function setMode(mode, label){
+    faceMode = mode;
+    frame.classList.remove('mode-listening','mode-thinking','mode-speaking','mode-sleeping');
+    if(mode !== 'idle') frame.classList.add('mode-'+mode);
+    statePill.textContent = label || mode.toUpperCase();
+  }
+  setMode('idle','IDLE');
+
+  function showSubtitle(text){
+    subtitle.textContent = text || '';
+  }
+
+  let lastActivity = performance.now();
+  let sleeping = false;
+  let sleepStartedAt = 0;
+
+  function noteActivity(){
+    lastActivity = performance.now();
+    if(sleeping){
+      sleeping = false;
+      sleepStartedAt = 0;
+      faceAnimation.nextLook = 0;
+      setMode('idle','IDLE');
+      showSubtitle('');
+    }
+  }
+
+  window.addEventListener('pointerdown', noteActivity, {passive:true});
+  window.addEventListener('touchstart', noteActivity, {passive:true});
+  window.addEventListener('keydown', event=>{
+    noteActivity();
+    if(event.ctrlKey && (event.key === '=' || event.key === '+')){
+      event.preventDefault();
+      toggleFullscreen();
+    }
+  });
+
+  // ---- procedural Cozmo-style face ----
+  const faceAnimation = {
+    gazeX:0, gazeY:0, targetX:0, targetY:0,
+    nextLook:0, blinkStart:0, nextBlink:performance.now()+1800+Math.random()*1800
+  };
+
+  function resizeFaceCanvas(){
+    const bounds = faceCanvas.getBoundingClientRect();
+    const pixelRatio = window.devicePixelRatio || 1;
+    faceCanvas.width = Math.round(bounds.width * pixelRatio);
+    faceCanvas.height = Math.round(bounds.height * pixelRatio);
+    faceCtx.setTransform(faceCanvas.width / 128, 0, 0, faceCanvas.height / 64, 0, 0);
+  }
+
+  function drawEye(centerX, centerY, scaleX, scaleY, upperLid){
+    const width = 28 * scaleX;
+    const height = 40 * scaleY;
+    const left = centerX - width / 2;
+    const right = centerX + width / 2;
+    const top = centerY - height / 2;
+    const bottom = centerY + height / 2;
+    const radius = Math.min(5, width * 0.2, height * 0.16);
+
+    faceCtx.beginPath();
+    faceCtx.moveTo(left + radius, top);
+    faceCtx.lineTo(right - radius, top);
+    faceCtx.quadraticCurveTo(right, top, right, top + radius);
+    faceCtx.lineTo(right, bottom - radius);
+    faceCtx.quadraticCurveTo(right, bottom, right - radius, bottom);
+    faceCtx.lineTo(left + radius, bottom);
+    faceCtx.quadraticCurveTo(left, bottom, left, bottom - radius);
+    faceCtx.lineTo(left, top + radius);
+    faceCtx.quadraticCurveTo(left, top, left + radius, top);
+    faceCtx.closePath();
+    faceCtx.fill();
+
+    if(upperLid > 0){
+      const lidDepth = height * upperLid;
+      faceCtx.fillStyle = '#000';
+      faceCtx.beginPath();
+      faceCtx.moveTo(left - 1, top - 1);
+      faceCtx.lineTo(right + 1, top - 1);
+      faceCtx.lineTo(right + 1, top + lidDepth * 0.68);
+      faceCtx.quadraticCurveTo(centerX, top + lidDepth * 1.25, left - 1, top + lidDepth * 0.68);
+      faceCtx.closePath();
+      faceCtx.fill();
+      faceCtx.fillStyle = '#fff';
+    }
+  }
+
+  function drawSleepZ(now){
+    const elapsed = (now - sleepStartedAt) / 1000;
+    faceCtx.save();
+    faceCtx.shadowBlur = 0;
+    for(let i=0;i<3;i++){
+      const phase = (elapsed + i * 0.72) % 2.4;
+      const alpha = Math.max(0, 1 - phase / 2.4);
+      faceCtx.globalAlpha = alpha * 0.8;
+      faceCtx.fillStyle = '#dfe4e0';
+      faceCtx.font = '600 ' + (3.4 + i * 0.8) + 'px sans-serif';
+      faceCtx.fillText('Z', 98 + i * 3.3, 21 - phase * 5.5);
+    }
+    faceCtx.restore();
+  }
+
+  function animateFace(now){
+    const animation = faceAnimation;
+    if(!sleeping && now - lastActivity >= 60000){
+      sleeping = true;
+      sleepStartedAt = now;
+      setMode('sleeping','SLEEPING');
+      showSubtitle('');
+      if(voiceListening) stopVoiceSession();
+    }
+    if(!sleeping && now >= animation.nextLook){
+      if(faceMode === 'thinking'){
+        animation.targetX = 3;
+        animation.targetY = -5;
+      } else if(faceMode === 'listening'){
+        animation.targetX = (Math.random() - 0.5) * 3;
+        animation.targetY = (Math.random() - 0.5) * 4;
+      } else {
+        animation.targetX = (Math.random() - 0.5) * 12;
+        animation.targetY = (Math.random() - 0.5) * 12;
+      }
+      animation.nextLook = now + (faceMode === 'thinking' ? 4000 + Math.random() * 3000 : 6000 + Math.random() * 6000);
+    }
+    if(!sleeping){
+      animation.gazeX += (animation.targetX - animation.gazeX) * 0.035;
+      animation.gazeY += (animation.targetY - animation.gazeY) * 0.035;
+    }
+
+    let blinkAmount = 0;
+    if(!sleeping && now >= animation.nextBlink){
+      animation.blinkStart = now;
+      animation.nextBlink = now + 2600 + Math.random() * 3000;
+    }
+    if(!sleeping && animation.blinkStart){
+      const progress = (now - animation.blinkStart) / 180;
+      if(progress < 1) blinkAmount = Math.sin(progress * Math.PI);
+      else animation.blinkStart = 0;
+    }
+
+    faceCtx.clearRect(0, 0, 128, 64);
+    faceCtx.fillStyle = '#fff';
+    faceCtx.shadowColor = 'rgba(255,255,255,.55)';
+    faceCtx.shadowBlur = 1.5;
+    const listening = faceMode === 'listening';
+    const thinking = faceMode === 'thinking';
+    const speaking = faceMode === 'speaking';
+    const speakingPulse = speaking ? 1 + Math.sin(now / 95) * 0.025 : 1;
+    const eyeScale = (listening ? 1.06 : thinking ? 0.94 : 1) * speakingPulse;
+    const sleepClose = sleeping ? Math.min(1, (now - sleepStartedAt) / 900) : 0;
+    const openScale = sleeping ? Math.max(0.035, 1 - sleepClose * 0.965) :
+      Math.max(0.035, (listening ? 1.04 : thinking ? 0.94 : 1) * (1 - blinkAmount * 0.965));
+    const lid = sleeping ? 0.35 : thinking ? 0.13 : 0;
+    const gazeScale = Math.min(0.25, Math.abs(animation.gazeX) / 10 * 0.25);
+    const leftEyeScale = eyeScale * (animation.gazeX < 0 ? 1 + gazeScale : 1 - gazeScale);
+    const rightEyeScale = eyeScale * (animation.gazeX > 0 ? 1 + gazeScale : 1 - gazeScale);
+    drawEye(39 + animation.gazeX, 32 + animation.gazeY, leftEyeScale, openScale, lid);
+    drawEye(89 + animation.gazeX, 32 + animation.gazeY, rightEyeScale, openScale, lid);
+    if(sleeping) drawSleepZ(now);
+    faceCtx.shadowBlur = 0;
+    requestAnimationFrame(animateFace);
+  }
+
+  resizeFaceCanvas();
+  window.addEventListener('resize', resizeFaceCanvas);
+  requestAnimationFrame(animateFace);
+
+  // ---- fps counter ----
+  let last = performance.now(), frames = 0;
+  const fpsEl = document.getElementById('fps');
+  function fpsLoop(now){
+    frames++;
+    if(now - last >= 1000){
+      fpsEl.textContent = frames + ' fps';
+      frames = 0; last = now;
+    }
+    requestAnimationFrame(fpsLoop);
+  }
+  requestAnimationFrame(fpsLoop);
+
+  // ---- hardware indicator: simulated / real-connected / real-missing / offline ----
+  const hwBadge = document.getElementById('hwBadge');
+  async function pollHardware(){
+    try{
+      const res = await fetch(BACKEND_URL + '/hardware');
+      const hw = await res.json();
+      hwBadge.className = 'hud';
+      if(hw.mock){
+        hwBadge.textContent = 'SIMULATED (no hardware)';
+        hwBadge.classList.add('hw-mock');
+      } else if(hw.connected){
+        hwBadge.textContent = 'ARDUINO CONNECTED (' + hw.transport + ')';
+        hwBadge.title = hw.detail || '';
+        hwBadge.classList.add('hw-connected');
+      } else {
+        hwBadge.textContent = 'ARDUINO NOT FOUND' + (hw.error ? ' — ' + hw.error : '');
+        hwBadge.classList.add('hw-missing');
+      }
+    }catch(e){
+      hwBadge.className = 'hud hw-offline';
+      hwBadge.textContent = 'BACKEND OFFLINE';
+    }
+  }
+  pollHardware();
+  setInterval(pollHardware, 4000);
+
+  talkBtn.addEventListener('click', ()=>{
+    if(voiceListening) stopVoiceSession();
+    else startVoiceInput();
+  });
+
+  // Expose hooks so the backend/WebSocket layer can drive the UI:
+  window.kiosk = {
+    setMode, showSubtitle,
+    logCommand(userSaid, recipe){
+      config.history.unshift({ts:new Date().toLocaleString(), userSaid, recipe});
+      config.history = config.history.slice(0,50);
+      saveConfig(config);
+      renderHistory();
+    }
+  };
+
+  // ================= TEST PANEL =================
+  const testPanel = document.getElementById('testPanel');
+  document.getElementById('settingsBtn').addEventListener('click', ()=>{
+    testPanel.classList.add('open');
+    refreshDiagnostics();
+    refreshModelCatalog();
+    renderPumps(); renderHistory();
+    document.getElementById('personalityText').value = config.personality;
+    document.getElementById('autoPourToggle').checked = config.autoPour;
+    document.getElementById('memoryText').value = config.memory;
+  });
+  document.getElementById('closePanel').addEventListener('click', ()=>{
+    testPanel.classList.remove('open');
+  });
+
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.panelSection').forEach(s=>s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---- talking to the backend ----
+  async function post(path, body){
+    const res = await fetch(BACKEND_URL + path, {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body || {})
+    });
+    let json = {};
+    try{ json = await res.json(); }catch(e){}
+    if(!res.ok){
+      throw new Error(json.error || ('HTTP ' + res.status));
+    }
+    return json;
+  }
+
+  async function toggleFullscreen(){
+    try{
+      if(document.fullscreenElement) await document.exitFullscreen();
+      else if(document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      else throw new Error('Fullscreen is not available in this browser.');
+    }catch(err){
+      const message = document.getElementById('systemMsg');
+      if(message) message.textContent = err.message || 'Could not enter fullscreen.';
+    }
+  }
+
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  function updateFullscreenLabel(){
+    fullscreenBtn.textContent = document.fullscreenElement ? 'Exit full screen' : 'Enter full screen';
+  }
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', updateFullscreenLabel);
+  updateFullscreenLabel();
+
+  function renderSystemIssues({ai, aiError, hardware, hardwareError, statusError}){
+    const list = document.getElementById('systemIssues');
+    if(!list) return;
+    const issues = [];
+    if(aiError) issues.push(['Backend', aiError]);
+    if(ai && !ai.groq_proxy_mode){
+      issues.push(['Backend update', 'Restart the backend to load the updated AI diagnostics.']);
+    }
+    if(ai && !ai.groq_api_key_set) issues.push(['Groq', 'API key is not set. Add it below in Settings.']);
+    if(ai && !ai.elevenlabs_api_key_set) issues.push(['ElevenLabs', 'API key is not set. Voice output will not work until it is configured.']);
+    if(hardwareError) issues.push(['Arduino', hardwareError]);
+    else if(hardware && !hardware.mock && !hardware.connected){
+      issues.push(['Arduino', hardware.error || 'Not connected. Check the cable and serial port.']);
+    }
+    if(statusError) issues.push(['Pump status', statusError]);
+    if(!enabledFlavorPumps().some(p=>p.id !== PUMP_COUNT)){
+      issues.push(['Drink recipes', 'No enabled flavor pumps. Configure at least one in Pumps & flavors.']);
+    }
+    Object.entries(providerIssues).forEach(([provider,message])=>issues.push([provider,message]));
+
+    list.replaceChildren();
+    if(!issues.length){
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No current issues detected.';
+      list.appendChild(empty);
+      return;
+    }
+    issues.forEach(([title,message])=>{
+      const item = document.createElement('div');
+      item.className = 'issueItem';
+      const heading = document.createElement('strong');
+      heading.textContent = title;
+      const detail = document.createElement('span');
+      detail.textContent = message;
+      item.append(heading,detail);
+      list.appendChild(item);
+    });
+  }
+
+  async function refreshModelCatalog(force=false){
+    const chatSelect = document.getElementById('chatModelSelect');
+    const recipeSelect = document.getElementById('recipeModelSelect');
+    const message = document.getElementById('modelsMsg');
+    const button = document.getElementById('refreshModels');
+    button.disabled = true;
+    message.textContent = 'Loading models from Groq...';
+    try{
+      const response = await fetch(BACKEND_URL + '/ai/models' + (force ? '?refresh=1' : ''));
+      const result = await response.json();
+      if(!response.ok) throw new Error(result.error || ('HTTP ' + response.status));
+      const fillOptions = (select, models, selected, fallback)=>{
+        select.replaceChildren();
+        models.forEach(model=>{
+          const option = document.createElement('option');
+          option.value = model.id;
+          option.textContent = model.name === model.id ? model.id : model.name + ' (' + model.id + ')';
+          select.appendChild(option);
+        });
+        select.disabled = models.length === 0;
+        if(!models.length) return '';
+        const ids = models.map(model=>model.id);
+        select.value = ids.includes(selected) ? selected : ids.includes(fallback) ? fallback : ids[0];
+        return select.value;
+      };
+      const chatModels = result.models.filter(model=>model.supports_chat);
+      const recipeModels = result.models.filter(model=>model.supports_recipe);
+      config.chatModel = fillOptions(chatSelect,chatModels,config.chatModel,result.chat_model);
+      config.recipeModel = fillOptions(recipeSelect,recipeModels,config.recipeModel,result.recipe_model);
+      saveConfig(config);
+      message.textContent = 'Loaded ' + result.models.length + ' active models; '
+        + chatModels.length + ' support chat and ' + recipeModels.length + ' support JSON recipes.';
+    }catch(err){
+      message.textContent = 'Could not load models: ' + err.message;
+    }finally{
+      button.disabled = false;
+    }
+  }
+
+  document.getElementById('chatModelSelect').addEventListener('change', event=>{
+    config.chatModel = event.target.value;
+    saveConfig(config);
+    document.getElementById('modelsMsg').textContent = 'Chat model saved.';
+  });
+  document.getElementById('recipeModelSelect').addEventListener('change', event=>{
+    config.recipeModel = event.target.value;
+    saveConfig(config);
+    document.getElementById('modelsMsg').textContent = 'Drink recipe model saved.';
+  });
+  document.getElementById('refreshModels').addEventListener('click', ()=>refreshModelCatalog(true));
+
+  let diagnosticsRefreshing = false;
+  async function refreshDiagnostics(){
+    const list = document.getElementById('diagnosticsList');
+    if(!list || diagnosticsRefreshing) return;
+    diagnosticsRefreshing = true;
+    list.replaceChildren();
+    try{
+      const results = await Promise.allSettled([
+        fetch(BACKEND_URL + '/ai/status'),
+        fetch(BACKEND_URL + '/hardware'),
+        fetch(BACKEND_URL + '/status')
+      ]);
+      const [aiResult, hardwareResult, statusResult] = results;
+      const aiResponse = aiResult.status === 'fulfilled' ? aiResult.value : null;
+      const hardwareResponse = hardwareResult.status === 'fulfilled' ? hardwareResult.value : null;
+      const statusResponse = statusResult.status === 'fulfilled' ? statusResult.value : null;
+      const readJson = async response=>{
+        if(!response) return null;
+        try{return await response.json();}catch(err){return null;}
+      };
+      const [ai,hardware,pumpStatus] = await Promise.all([
+        readJson(aiResponse),readJson(hardwareResponse),readJson(statusResponse)
+      ]);
+      const voiceIdInput = document.getElementById('elevenVoiceId');
+      if(voiceIdInput && !voiceIdInput.value && ai) voiceIdInput.value = ai.elevenlabs_voice_id || '';
+      const responseError = (response,result,label)=>{
+        if(result.status === 'rejected') return result.reason && result.reason.message || label + ' request failed.';
+        if(!response.ok) return label + ' returned HTTP ' + response.status + '.';
+        return '';
+      };
+      const aiError = responseError(aiResponse,aiResult,'AI status');
+      const hardwareError = responseError(hardwareResponse,hardwareResult,'Hardware status');
+      const statusError = responseError(statusResponse,statusResult,'Pump status');
+      renderSystemIssues({ai,aiError,hardware,hardwareError,statusError});
+      const hardwareText = !hardware ? 'Unavailable' : hardware.mock ? 'Simulated' : hardware.connected ? 'Connected (' + hardware.transport + ')' : 'Not found';
+      const aiAvailable = Boolean(ai && aiResponse && aiResponse.ok);
+      const values = [
+        ['Backend', aiAvailable ? 'Online' : 'Error'],
+        ['Groq recipe model', ai && ai.groq_recipe_model || 'Unavailable'],
+        ['Groq chat model', ai && ai.groq_chat_model || 'Unavailable'],
+        ['Groq proxy mode', ai && ai.groq_proxy_mode || 'Restart backend'],
+        ['Groq API key', ai && ai.groq_api_key_set ? 'Set in backend memory' : 'Not set'],
+        ['ElevenLabs model', ai && ai.elevenlabs_model || 'Unavailable'],
+        ['ElevenLabs voice ID', ai && ai.elevenlabs_voice_id || 'Not set'],
+        ['ElevenLabs API key', ai && ai.elevenlabs_api_key_set ? 'Set in backend memory' : 'Not set'],
+        ['Pump transport', hardwareText],
+        ['Active pumps', Array.isArray(pumpStatus) ? String(pumpStatus.filter(p=>p.active).length) : 'Status unavailable'],
+        ['Configured flavors', String(enabledFlavorPumps().filter(p=>p.id !== PUMP_COUNT).length)],
+        ['Voice input', window.isSecureContext && (window.SpeechRecognition || window.webkitSpeechRecognition) ? 'Available' : 'Requires a supported browser on localhost/HTTPS'],
+        ['Voice output', ai && ai.elevenlabs_api_key_set ? 'ElevenLabs ready' : 'ElevenLabs key required'],
+        ['Full screen', document.fullscreenEnabled ? 'Available' : 'Unavailable'],
+        ['Animation rate', fpsEl.textContent]
+      ];
+      values.forEach(([label,value])=>{
+        const row = document.createElement('div');
+        row.className = 'diagItem';
+        const name = document.createElement('span');
+        name.textContent = label;
+        const result = document.createElement('span');
+        result.textContent = value;
+        row.append(name,result);
+        list.appendChild(row);
+      });
+    }catch(err){
+      const row = document.createElement('div');
+      row.className = 'empty';
+      row.textContent = 'Diagnostics unavailable: ' + err.message;
+      list.appendChild(row);
+        renderSystemIssues({ai:null,aiError:'Diagnostics failed: ' + err.message,hardware:null,hardwareError:'',statusError:''});
+    }finally{
+      diagnosticsRefreshing = false;
+    }
+  }
+  document.getElementById('testVoiceBtn').addEventListener('click', async event=>{
+    const button = event.currentTarget;
+    const message = document.getElementById('systemMsg');
+    button.disabled = true;
+    message.textContent = 'Testing Groq and ElevenLabs voice output...';
+    try{
+      const reply = await streamElevenLabsVoice({
+        prompt:'Say: This is a test of the kiosk voice.',
+        pumps:enabledFlavorPumps(),
+        personality:config.personality,
+        memory:config.memory
+      });
+      delete providerIssues.Groq;
+      delete providerIssues.ElevenLabs;
+      if(reply) showSubtitle(reply);
+      message.textContent = 'Voice test completed.';
+      await refreshDiagnostics();
+    }catch(err){
+      const provider = /ElevenLabs|audio playback|voice responses/i.test(err.message) ? 'ElevenLabs' : 'Groq';
+      providerIssues[provider] = err.message || 'Voice test failed.';
+      message.textContent = err.message || 'Voice test failed.';
+      await refreshDiagnostics();
+    }finally{
+      button.disabled = false;
+    }
+  });
+  document.getElementById('refreshDiagnostics').addEventListener('click', refreshDiagnostics);
+  document.getElementById('saveProviderKeys').addEventListener('click', async event=>{
+    const button = event.currentTarget;
+    const groqInput = document.getElementById('groqKeyInput');
+    const elevenInput = document.getElementById('elevenKeyInput');
+    const voiceInput = document.getElementById('elevenVoiceId');
+    const message = document.getElementById('systemMsg');
+    const settings = {
+      groq_api_key:groqInput.value.trim(),
+      elevenlabs_api_key:elevenInput.value.trim(),
+      elevenlabs_voice_id:voiceInput.value.trim()
+    };
+    if(!settings.groq_api_key && !settings.elevenlabs_api_key && !settings.elevenlabs_voice_id){
+      message.textContent = 'Enter at least one provider key or voice ID.';
+      return;
+    }
+    button.disabled = true;
+    message.textContent = 'Sending provider settings to the local backend...';
+    try{
+      await post('/ai/configure',settings);
+      if(settings.groq_api_key) delete providerIssues.Groq;
+      if(settings.elevenlabs_api_key) delete providerIssues.ElevenLabs;
+      groqInput.value = '';
+      elevenInput.value = '';
+      message.textContent = 'Provider keys set in backend memory. They clear when the backend restarts.';
+      await refreshDiagnostics();
+    }catch(err){ message.textContent = err.message; }
+    finally{ button.disabled = false; }
+  });
+  document.getElementById('clearProviderKeys').addEventListener('click', async event=>{
+    const button = event.currentTarget;
+    const message = document.getElementById('systemMsg');
+    button.disabled = true;
+    try{
+      await post('/ai/configure',{clear:true});
+      delete providerIssues.Groq;
+      delete providerIssues.ElevenLabs;
+      document.getElementById('groqKeyInput').value = '';
+      document.getElementById('elevenKeyInput').value = '';
+      document.getElementById('elevenVoiceId').value = '';
+      message.textContent = 'Groq and ElevenLabs keys cleared from backend memory.';
+      await refreshDiagnostics();
+    }catch(err){ message.textContent = err.message; }
+    finally{ button.disabled = false; }
+  });
+  const enabledFlavorPumps = ()=>config.pumps
+    .filter(p=>p.enabled && p.flavor.trim() && p.speed > 0)
+    .map(p=>({id:p.id, flavor:p.flavor.trim(), speed:p.speed}));
+
+  let speechRecognition = null;
+  let voiceListening = false;
+  let voiceTranscript = '';
+
+  function stopVoiceSession(message){
+    voiceListening = false;
+    voiceTranscript = '';
+    const recognition = speechRecognition;
+    speechRecognition = null;
+    if(recognition){
+      recognition.onend = null;
+      try{ recognition.abort(); }catch(err){}
+    }
+    talkBtn.classList.remove('active');
+    talkBtn.textContent = 'TALK';
+    talkBtn.disabled = false;
+    if(message) showSubtitle(message);
+    if(sleeping) setMode('sleeping','SLEEPING');
+    else if(faceMode === 'listening') setMode('idle','IDLE');
+  }
+
+  function startVoiceInput(){
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!Recognition){
+      showSubtitle('Voice input is unavailable in this browser. Type your drink idea instead.');
+      drinkInput.focus();
+      return;
+    }
+    if(!window.isSecureContext){
+      showSubtitle('Voice input requires localhost or HTTPS. Type your drink idea instead.');
+      drinkInput.focus();
+      return;
+    }
+    unlockElevenAudio();
+    const recognition = new Recognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    speechRecognition = recognition;
+    voiceListening = true;
+    voiceTranscript = '';
+    talkBtn.classList.add('active');
+    talkBtn.textContent = 'STOP';
+    setMode('listening','LISTENING');
+    showSubtitle('Listening...');
+    recognition.onresult = event=>{
+      voiceTranscript = Array.from(event.results, result=>result[0].transcript).join(' ').replace(/\s+/g,' ').trim();
+      if(voiceTranscript) showSubtitle('You: ' + voiceTranscript);
+    };
+    recognition.onerror = event=>{
+      if(event.error === 'aborted'){
+        stopVoiceSession();
+        return;
+      }
+      const errorMessages = {
+        'not-allowed':'Microphone access was denied. Allow it in your browser and try again.',
+        'service-not-allowed':'This browser blocks its speech recognition service. Try another supported browser.',
+        'audio-capture':'No microphone is available. Connect or enable a microphone and try again.',
+        'network':'The browser speech service could not connect. Check internet access and try again.',
+        'no-speech':'No speech was detected. Check your microphone and try again.'
+      };
+      const errorCode = event.error || 'unknown';
+      const message = errorMessages[errorCode] || 'Voice input failed (' + errorCode + '). Type your drink idea instead.';
+      providerIssues['Voice input'] = message;
+      refreshDiagnostics();
+      stopVoiceSession(message);
+    };
+    recognition.onend = ()=>{
+      if(speechRecognition === recognition){
+        const prompt = voiceTranscript.trim();
+        stopVoiceSession(prompt ? '' : 'No speech detected. Tap TALK and try again.');
+        if(prompt){
+          delete providerIssues['Voice input'];
+          refreshDiagnostics();
+          noteActivity();
+          drinkInput.value = prompt;
+          generateDrink(prompt, true);
+        }
+      }
+    };
+    try{ recognition.start(); }
+    catch(err){ stopVoiceSession('Could not start voice input. Type your drink idea instead.'); }
+  }
+
+  let pendingRecipe = null;
+  let pendingPrompt = '';
+  let isGenerating = false;
+  let isPouring = false;
+  let elevenAudioContext = null;
+
+  function unlockElevenAudio(){
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContextClass) return;
+    if(!elevenAudioContext) elevenAudioContext = new AudioContextClass();
+    if(elevenAudioContext.state === 'suspended') elevenAudioContext.resume().catch(()=>{});
+  }
+
+  async function streamElevenLabsVoice({prompt, pumps, personality, recipe, memory}){
+    unlockElevenAudio();
+    if(!elevenAudioContext) throw new Error('ElevenLabs audio playback is unavailable in this browser.');
+    const response = await fetch(BACKEND_URL + '/ai/voice-stream', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        prompt, pumps, personality, recipe, memory,
+        chat_model:config.chatModel,
+        recipe_model:config.recipeModel
+      })
+    });
+    if(!response.ok){
+      let error = {};
+      try{ error = await response.json(); }catch(err){}
+      throw new Error(error.error || ('HTTP ' + response.status));
+    }
+    if(!response.body) throw new Error('Streaming voice responses are unavailable in this browser.');
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let lineBuffer = '';
+    let playbackAt = elevenAudioContext.currentTime + 0.04;
+    let captionText = '';
+    let allText = '';
+
+    const playChunk = event=>{
+      if(event.error) throw new Error(event.error);
+      if(!event.audio_base64) return;
+      const binary = atob(event.audio_base64);
+      const sampleCount = Math.floor(binary.length / 2);
+      if(!sampleCount) return;
+      const audioBuffer = elevenAudioContext.createBuffer(1,sampleCount,24000);
+      const samples = audioBuffer.getChannelData(0);
+      for(let i=0;i<sampleCount;i++){
+        let sample = binary.charCodeAt(i*2) | (binary.charCodeAt(i*2+1) << 8);
+        if(sample >= 32768) sample -= 65536;
+        samples[i] = sample / 32768;
+      }
+      const startAt = Math.max(playbackAt,elevenAudioContext.currentTime + 0.02);
+      const source = elevenAudioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(elevenAudioContext.destination);
+      source.start(startAt);
+      playbackAt = startAt + audioBuffer.duration;
+      setMode('speaking','SPEAKING');
+
+      const alignment = event.alignment || event.normalized_alignment || {};
+      const characters = alignment.characters || [];
+      const endTimes = alignment.character_end_times_seconds || [];
+      const chunkText = characters.join('');
+      allText += chunkText;
+      const words = /\S+/g;
+      let word;
+      while((word = words.exec(chunkText))){
+        const lastChar = word.index + word[0].length - 1;
+        const elapsed = Number(endTimes[lastChar]);
+        if(!Number.isFinite(elapsed)) continue;
+        const caption = (captionText + chunkText.slice(0,lastChar + 1)).slice(-220);
+        const delay = Math.max(0,(startAt + elapsed - elevenAudioContext.currentTime) * 1000);
+        setTimeout(()=>showSubtitle(caption),delay);
+      }
+      captionText += chunkText;
+    };
+
+    const handleDataLine = line=>{
+      if(!line.startsWith('data:')) return;
+      const data = line.slice(5).trim();
+      if(data === '[DONE]') return;
+      const event = JSON.parse(data);
+      playChunk(event);
+    };
+
+    try{
+      while(true){
+        const {value,done} = await reader.read();
+        lineBuffer += decoder.decode(value || new Uint8Array(), {stream:!done});
+        let lineEnd;
+        while((lineEnd = lineBuffer.indexOf('\n')) >= 0){
+          const line = lineBuffer.slice(0,lineEnd).trim();
+          lineBuffer = lineBuffer.slice(lineEnd + 1);
+          handleDataLine(line);
+        }
+        if(done) break;
+      }
+      if(lineBuffer.trim()) handleDataLine(lineBuffer.trim());
+      const remaining = Math.max(0,(playbackAt - elevenAudioContext.currentTime) * 1000);
+      if(remaining) await new Promise(resolve=>setTimeout(resolve,remaining));
+      if(faceMode === 'speaking') setMode('idle','IDLE');
+      return allText.trim();
+    }catch(err){
+      throw err;
+    }finally{
+      reader.releaseLock();
+    }
+  }
+
+  function showRecipe(recipe, prompt){
+    pendingRecipe = recipe;
+    pendingPrompt = prompt;
+    document.getElementById('recipeName').textContent = recipe.name;
+    document.getElementById('recipeReply').textContent = recipe.reply;
+    const list = document.getElementById('recipeIngredients');
+    list.replaceChildren();
+    recipe.ingredients.forEach(item=>{
+      const row = document.createElement('li');
+      const flavor = document.createElement('span');
+      flavor.textContent = item.flavor;
+      const amount = document.createElement('span');
+      amount.textContent = item.seconds + ' sec';
+      row.append(flavor, amount);
+      list.appendChild(row);
+    });
+    recipeOverlay.classList.add('open');
+    recipeOverlay.setAttribute('aria-hidden','false');
+  }
+
+  function isDrinkRequest(prompt){
+    return /\b(?:make|create|mix|craft|invent|generate|design|prepare|pour|serve|suggest|recommend|give|order|whip up|surprise me)\b/i.test(prompt)
+      || /\b(?:i want|i'd like|i would like|i need)\b.{0,60}\b(?:drink|soda|beverage|recipe|something)\b/i.test(prompt);
+  }
+
+  async function generateDrink(prompt, voiceRequest=false){
+    if(isGenerating) return;
+    unlockElevenAudio();
+    const pumps = enabledFlavorPumps();
+    const canMakeRecipe = pumps.some(p=>p.id !== PUMP_COUNT);
+    const wantsRecipe = canMakeRecipe && isDrinkRequest(prompt);
+    isGenerating = true;
+    generateBtn.disabled = true;
+    talkBtn.disabled = true;
+    setMode('thinking','THINKING');
+    showSubtitle(wantsRecipe ? 'Mixing up an idea...' : 'Thinking...');
+    let activeProvider = 'Groq';
+    try{
+      if(wantsRecipe){
+        const result = await post('/ai/recipe', {
+          prompt, personality:config.personality, pumps, memory:config.memory,
+          recipe_model:config.recipeModel
+        });
+        delete providerIssues.Groq;
+        if(config.autoPour){
+          showSubtitle('Auto-pouring ' + result.recipe.name + '...');
+          await pourRecipe(result.recipe, prompt, true);
+        }else{
+          showRecipe(result.recipe, prompt);
+          activeProvider = 'ElevenLabs';
+          try{
+            const reply = await streamElevenLabsVoice({prompt, pumps, personality:config.personality, recipe:result.recipe, memory:config.memory});
+            delete providerIssues.ElevenLabs;
+            result.recipe.reply = reply;
+            document.getElementById('recipeReply').textContent = reply;
+          }catch(err){
+            providerIssues.ElevenLabs = err.message || 'Voice response failed.';
+            showSubtitle('Recipe ready. Voice response failed: ' + err.message);
+            await refreshDiagnostics();
+          }
+          setMode('idle','IDLE');
+        }
+      }
+      else{
+        if(voiceRequest){
+          const reply = await streamElevenLabsVoice({prompt, pumps, personality:config.personality, memory:config.memory});
+          delete providerIssues.Groq;
+          delete providerIssues.ElevenLabs;
+          showSubtitle(reply);
+        }else{
+          const result = await post('/ai/chat', {
+            prompt, personality:config.personality, pumps, memory:config.memory,
+            chat_model:config.chatModel
+          });
+          delete providerIssues.Groq;
+          showSubtitle(result.reply);
+        }
+        setMode('idle','IDLE');
+      }
+      await refreshDiagnostics();
+    }catch(err){
+      providerIssues[activeProvider] = err.message || 'The request failed for an unknown reason.';
+      refreshDiagnostics();
+      setMode('idle','IDLE');
+      showSubtitle(err.message);
+    }finally{
+      isGenerating = false;
+      generateBtn.disabled = false;
+      talkBtn.disabled = false;
+    }
+  }
+
+  async function pourRecipe(recipe, prompt, automatic=false){
+    if(!recipe || isPouring) return;
+    isPouring = true;
+    confirmPourBtn.disabled = true;
+    confirmPourBtn.textContent = 'Starting...';
+    try{
+      await post('/ai/dispense', {recipe, pumps:enabledFlavorPumps()});
+      recipeOverlay.classList.remove('open');
+      recipeOverlay.setAttribute('aria-hidden','true');
+      window.kiosk.logCommand(prompt, recipe);
+      pendingRecipe = null;
+      pendingPrompt = '';
+      drinkInput.value = '';
+      showSubtitle('Pouring your drink.');
+      try{
+        const reply = await streamElevenLabsVoice({
+          prompt:automatic
+            ? 'The user enabled automatic pouring and the drink is now pouring. Say a cheerful, brief acknowledgment.'
+            : 'The user confirmed the drink and it is now pouring. Say a cheerful, brief acknowledgment.',
+          pumps:enabledFlavorPumps(),
+          personality:config.personality,
+          memory:config.memory
+        });
+        delete providerIssues.ElevenLabs;
+        if(reply) showSubtitle(reply);
+      }catch(err){
+        providerIssues.ElevenLabs = err.message || 'Voice acknowledgment failed.';
+        showSubtitle('Drink is pouring. Voice acknowledgment failed: ' + err.message);
+        refreshDiagnostics();
+      }
+      setMode('idle','IDLE');
+    }catch(err){
+      setMode('idle','IDLE');
+      showSubtitle(err.message);
+      if(automatic && !recipeOverlay.classList.contains('open')) showRecipe(recipe, prompt);
+    }finally{
+      isPouring = false;
+      confirmPourBtn.disabled = false;
+      confirmPourBtn.textContent = 'Pour drink';
+    }
+  }
+
+  drinkForm.addEventListener('submit', event=>{
+    event.preventDefault();
+    const prompt = drinkInput.value.trim();
+    if(!prompt){ drinkInput.focus(); return; }
+    generateDrink(prompt);
+  });
+
+  document.getElementById('cancelRecipe').addEventListener('click', ()=>{
+    recipeOverlay.classList.remove('open');
+    recipeOverlay.setAttribute('aria-hidden','true');
+    pendingRecipe = null;
+    setMode('idle','IDLE');
+  });
+
+  confirmPourBtn.addEventListener('click', ()=>pourRecipe(pendingRecipe,pendingPrompt));
+
+  const clampSecs = v => Math.max(1, Math.min(MAX_SECS, Math.round(+v || 0) || 1));
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const pumpMsg = t => { const el = document.getElementById('pumpMsg'); if(el) el.textContent = t || ''; };
+  const pumpLabel = p => 'Pump ' + p.id + (p.flavor ? ' (' + p.flavor + ')' : '');
+
+  // ---- per-pump timed run ----
+  const runState = {};   // pump id -> {timer}
+
+  function setRunBtn(id, label, running){
+    const b = document.querySelector('.runBtn[data-id="' + id + '"]');
+    if(!b) return;
+    b.textContent = label;
+    b.classList.toggle('running', !!running);
+  }
+  function clearRun(id){
+    const s = runState[id];
+    if(!s) return;
+    clearInterval(s.timer);
+    delete runState[id];
+  }
+
+  async function runPump(id){
+    const p = config.pumps.find(x => x.id == id);
+    const secs = clampSecs(p.secs);
+    pumpMsg('');
+    setRunBtn(id, 'Starting…', true);
+    try{
+      const json = await post('/fire', {pump:id, ms:secs*1000, speed:p.speed});
+      if(json.arduino_reply !== 'OK') throw new Error(json.arduino_reply || 'no reply from the Arduino');
+    }catch(err){
+      setRunBtn(id, 'Run', false);
+      pumpMsg(pumpLabel(p) + ' failed: ' + err.message);
+      return;
+    }
+    const endAt = Date.now() + secs*1000;
+    const tick = () => {
+      const left = Math.ceil((endAt - Date.now()) / 1000);
+      if(left <= 0){ clearRun(id); setRunBtn(id, 'Run', false); }
+      else setRunBtn(id, 'Stop (' + left + 's)', true);
+    };
+    runState[id] = {timer: setInterval(tick, 250)};
+    tick();
+  }
+
+  async function stopPump(id){
+    clearRun(id);
+    setRunBtn(id, 'Run', false);
+    try{ await post('/stop', {pump:+id}); }
+    catch(err){ pumpMsg('Stop failed: ' + err.message + ' — press Stop all.'); }
+  }
+
+  async function stopEverything(){
+    selfTestAbort = true;
+    Object.keys(runState).forEach(id => { clearRun(id); setRunBtn(id, 'Run', false); });
+    try{ await post('/stopall'); pumpMsg('All pumps stopped.'); }
+    catch(err){ pumpMsg('Stop all failed: ' + err.message); }
+  }
+
+  function renderPumps(){
+    const list = document.getElementById('pumpList');
+    list.innerHTML = '';
+    config.pumps.forEach(p=>{
+      const row = document.createElement('div');
+      row.className = 'pumpRow';
+      row.innerHTML = `
+        <input type="checkbox" ${p.enabled?'checked':''} data-id="${p.id}" class="enableChk" title="Include in self-test">
+        <input type="text" placeholder="Pump ${p.id} flavor" value="${esc(p.flavor)}" data-id="${p.id}" class="flavorInput">
+        <input type="range" min="0" max="100" value="${p.speed}" data-id="${p.id}" class="speedRange" title="${p.speed}%">
+        <input type="number" min="1" max="${MAX_SECS}" step="1" value="${p.secs}" data-id="${p.id}" class="secsInput" inputmode="numeric" title="Seconds to run">
+        <button class="runBtn" data-id="${p.id}">${runState[p.id] ? 'Stop' : 'Run'}</button>
+        <span style="color:var(--dim);font-size:11px;">#${p.id}</span>
+      `;
+      list.appendChild(row);
+    });
+    list.querySelectorAll('.enableChk').forEach(el=>el.addEventListener('change', e=>{
+      const p = config.pumps.find(x=>x.id==e.target.dataset.id);
+      p.enabled = e.target.checked; saveConfig(config);
+    }));
+    list.querySelectorAll('.flavorInput').forEach(el=>el.addEventListener('input', e=>{
+      const p = config.pumps.find(x=>x.id==e.target.dataset.id);
+      p.flavor = e.target.value; saveConfig(config);
+    }));
+    list.querySelectorAll('.speedRange').forEach(el=>el.addEventListener('input', e=>{
+      const p = config.pumps.find(x=>x.id==e.target.dataset.id);
+      p.speed = +e.target.value; e.target.title = p.speed+'%'; saveConfig(config);
+    }));
+    list.querySelectorAll('.secsInput').forEach(el=>{
+      el.addEventListener('input', e=>{
+        const p = config.pumps.find(x=>x.id==e.target.dataset.id);
+        if(e.target.value !== '') { p.secs = clampSecs(e.target.value); saveConfig(config); }
+      });
+      el.addEventListener('change', e=>{            // tidy the box once they finish typing
+        const p = config.pumps.find(x=>x.id==e.target.dataset.id);
+        p.secs = clampSecs(e.target.value); e.target.value = p.secs; saveConfig(config);
+      });
+    });
+    list.querySelectorAll('.runBtn').forEach(el=>el.addEventListener('click', e=>{
+      const id = +e.target.dataset.id;
+      if(runState[id]) stopPump(id); else runPump(id);
+    }));
+  }
+  document.getElementById('stopAll').addEventListener('click', stopEverything);
+
+  document.getElementById('savePersonality').addEventListener('click', ()=>{
+    config.personality = document.getElementById('personalityText').value;
+    saveConfig(config);
+  });
+
+  document.getElementById('autoPourToggle').addEventListener('change', event=>{
+    config.autoPour = event.target.checked;
+    saveConfig(config);
+  });
+
+  document.getElementById('saveMemory').addEventListener('click', ()=>{
+    config.memory = document.getElementById('memoryText').value.trim().slice(0,2000);
+    document.getElementById('memoryText').value = config.memory;
+    saveConfig(config);
+    document.getElementById('memoryMsg').textContent = 'Memory saved in this browser.';
+  });
+
+  document.getElementById('clearMemory').addEventListener('click', ()=>{
+    config.memory = '';
+    document.getElementById('memoryText').value = '';
+    saveConfig(config);
+    document.getElementById('memoryMsg').textContent = 'Memory bank cleared.';
+  });
+
+  function renderHistory(){
+    const el = document.getElementById('historyList');
+    if(!config.history.length){ el.innerHTML = '<div class="empty">No commands yet.</div>'; return; }
+    el.innerHTML = config.history.map(h=>`
+      <div class="histRow">
+        <span class="who">${esc(h.ts)}</span> — "${esc(h.userSaid)}"
+        <pre>${esc(JSON.stringify(h.recipe,null,0))}</pre>
+      </div>`).join('');
+  }
+
+  // ---- self-test: every ticked pump, one after another ----
+  let selfTestAbort = false, selfTestRunning = false;
+
+  async function runSelfTest(){
+    if(selfTestRunning) return;
+    const log = document.getElementById('selfTestLog');
+    const btn = document.getElementById('runSelfTest');
+    const secsBox = document.getElementById('stSecs');
+    const secs = clampSecs(secsBox.value || 3);
+    secsBox.value = secs;
+    const line = text => { const d = document.createElement('div'); d.textContent = text; log.appendChild(d); return d; };
+
+    log.innerHTML = '';
+    const enabled = config.pumps.filter(p => p.enabled);
+    if(!enabled.length){ line('No pumps selected. Tick "On" for the pumps you want to test.'); return; }
+
+    selfTestRunning = true; selfTestAbort = false; btn.disabled = true;
+    line('Testing ' + enabled.length + ' pump' + (enabled.length>1?'s':'') + ', ' + secs + 's each (about ' +
+         Math.round(enabled.length * (secs + 0.3)) + 's in total).');
+
+    let finished = 0;
+    for(const p of enabled){
+      if(selfTestAbort) break;
+      const row = line(pumpLabel(p) + ': running…');
+      try{
+        const json = await post('/fire', {pump:p.id, ms:secs*1000, speed:p.speed});
+        if(json.arduino_reply !== 'OK') throw new Error(json.arduino_reply || 'no reply from the Arduino');
+      }catch(err){
+        row.textContent = pumpLabel(p) + ': failed — ' + err.message;
+        selfTestAbort = true;
+        break;
+      }
+      const endAt = Date.now() + secs*1000 + 300;   // small gap so pumps don't overlap
+      while(Date.now() < endAt && !selfTestAbort){
+        row.textContent = pumpLabel(p) + ': running… ' + Math.max(0, Math.ceil((endAt - 300 - Date.now())/1000)) + 's';
+        await sleep(200);
+      }
+      if(selfTestAbort){ row.textContent = pumpLabel(p) + ': stopped'; break; }
+      row.textContent = pumpLabel(p) + ': done';
+      finished++;
+    }
+    line(selfTestAbort ? 'Self-test stopped (' + finished + ' of ' + enabled.length + ' finished).'
+                       : 'Self-test complete — ' + finished + ' of ' + enabled.length + ' pumps ran.');
+    selfTestRunning = false; btn.disabled = false;
+  }
+  document.getElementById('runSelfTest').addEventListener('click', runSelfTest);
+  document.getElementById('stopSelfTest').addEventListener('click', stopEverything);
+
+})();
+</script>
+</body>
+</html>
